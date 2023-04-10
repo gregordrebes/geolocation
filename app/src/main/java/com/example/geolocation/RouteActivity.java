@@ -83,13 +83,11 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         ContentValues routeData = new ContentValues();
         routeData.put("name", tfRouteName.getText().toString());
 
+        // TODO other fields
+        routeData.put("coordinates", coordinates);
+
         routeId = (int) WritableDatabaseManager.getInstance(this).insert("routes", null, routeData);
-
-        ContentValues coordinatesData = new ContentValues();
-        coordinatesData.put("coordinates", coordinates);
-        coordinatesData.put("route_id", routeId);
-
-        WritableDatabaseManager.getInstance(this).insert("coordinates", null, coordinatesData);
+        // TODO alerts
     }
 
     private void initComponents() {

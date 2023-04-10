@@ -46,7 +46,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Bundle bundle = getIntent().getExtras();
         int routeId = bundle.getInt("route");
 
-        Cursor res = ReadableDatabaseManager.getInstance(this).rawQuery( "select * from coordinates where route_id = " + routeId + " order by created_at", null );
+        Cursor res = ReadableDatabaseManager.getInstance(this).rawQuery( "select * from routes where id = " + routeId, null );
 
         if (res != null && res.getCount() != 0) {
             res.moveToFirst();
