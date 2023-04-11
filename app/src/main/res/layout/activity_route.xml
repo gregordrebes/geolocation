@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="124dp"
-        android:layout_marginTop="384dp"
+        android:layout_marginTop="444dp"
         android:enabled="false"
         android:text="Mostrar mapa"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,6 +40,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
         android:layout_width="249dp"
         android:layout_height="51dp"
         android:layout_marginStart="79dp"
@@ -54,4 +55,15 @@
             android:enabled="true"
             android:hint="Digite o nome da rota" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btAddAlert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="380dp"
+        android:enabled="false"
+        android:text="Adicionar alerta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

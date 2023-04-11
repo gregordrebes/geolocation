@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
@@ -22,6 +23,8 @@ import com.google.android.material.textfield.TextInputEditText;
 public class RouteActivity extends AppCompatActivity implements LocationListener {
     private Button btStartStop = null;
     private Button btShowMap = null;
+
+    private Button btAddAlert = null;
     private TextInputEditText tfRouteName = null;
 
     private int currentStatus = GEOLOCATION_STATUS.STOPPED.getStatus();
@@ -79,10 +82,10 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         btStartStop.setText("Iniciar");
         btStartStop.setEnabled(false);
         btShowMap.setEnabled(true);
+        btAddAlert.setEnabled(true);
 
         ContentValues routeData = new ContentValues();
         routeData.put("name", tfRouteName.getText().toString());
-
         // TODO other fields
         routeData.put("coordinates", coordinates);
 
@@ -93,6 +96,7 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     private void initComponents() {
         btShowMap = (Button) findViewById(R.id.btShowMap);
         btStartStop = (Button) findViewById(R.id.btStartStop);
+        btAddAlert = (Button) findViewById(R.id.btAddAlert);
         tfRouteName = (TextInputEditText) findViewById(R.id.tfRouteName);
 
         btStartStop.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +123,6 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
                 onStopTracking();
             }
         });
-
         btShowMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -131,6 +134,33 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
                 Intent intent = new Intent(RouteActivity.this, MapsActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
+            }
+        });
+
+        btAddAlert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(RouteActivity.this);
+                // Get the layout inflater
+                LayoutInflater inflater = requireActivity().getLayoutInflater();
+
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                builder.setView(inflater.inflate(R.layout.dialog_signin, null))
+                        // Add action buttons
+                        .setPositiveButton(R.string.signin, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                // sign in the user ...
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                LoginDialogFragment.this.getDialog().cancel();
+                            }
+                        });
+                builder.create();
+
             }
         });
     }
