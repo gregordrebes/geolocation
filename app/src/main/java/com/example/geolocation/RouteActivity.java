@@ -3,11 +3,13 @@ package com.example.geolocation;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -20,7 +22,7 @@ import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-public class RouteActivity extends AppCompatActivity implements LocationListener {
+public class RouteActivity extends AppCompatActivity implements LocationListener, AddAlertDialog.DialogListener {
     private Button btStartStop = null;
     private Button btShowMap = null;
 
@@ -30,6 +32,8 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     private int currentStatus = GEOLOCATION_STATUS.STOPPED.getStatus();
     private int routeId = 0;
     private String coordinates = "";
+
+    private String teste = "teste";
 
     private enum GEOLOCATION_STATUS {
         TRACKING(0),
@@ -140,28 +144,21 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         btAddAlert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(RouteActivity.this);
-                // Get the layout inflater
-                LayoutInflater inflater = requireActivity().getLayoutInflater();
-
-                // Inflate and set the layout for the dialog
-                // Pass null as the parent view because its going in the dialog layout
-                builder.setView(inflater.inflate(R.layout.dialog_signin, null))
-                        // Add action buttons
-                        .setPositiveButton(R.string.signin, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                // sign in the user ...
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                LoginDialogFragment.this.getDialog().cancel();
-                            }
-                        });
-                builder.create();
-
+                openDialog();
             }
         });
+    }
+
+    public void openDialog() {
+        AddAlertDialog exampleDialog = new AddAlertDialog();
+        Bundle bundle = new Bundle();
+//        bundle.putString("teste", String.valueOf(tfRouteName.getText()));
+        exampleDialog.setArguments(bundle);
+        exampleDialog.show(getSupportFragmentManager(), "example dialog");
+    }
+
+    @Override
+    public void applyTexts(String username, String password) {
+        /**/
     }
 }
