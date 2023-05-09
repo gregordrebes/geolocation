@@ -79,6 +79,7 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         currentStatus = GEOLOCATION_STATUS.TRACKING.getStatus();
         tfRouteName.setEnabled(false);
         btStartStop.setText("Parar");
+        btAddAlert.setEnabled(true);
     }
 
     private void onStopTracking() {
@@ -86,7 +87,6 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         btStartStop.setText("Iniciar");
         btStartStop.setEnabled(false);
         btShowMap.setEnabled(true);
-        btAddAlert.setEnabled(true);
 
         ContentValues routeData = new ContentValues();
         routeData.put("name", tfRouteName.getText().toString());
