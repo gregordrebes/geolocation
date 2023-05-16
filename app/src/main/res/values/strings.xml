@@ -15,4 +15,12 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <string-array name="alert_categories">
+        <item>Selecione uma categoria</item>
+        <item>Lixo</item>
+        <item>Cocô</item>
+        <item>Bituca</item>
+        <item>Outros</item>
+    </string-array>
 </resources>

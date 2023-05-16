@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ public class AddAlertDialog extends AppCompatDialogFragment {
     private EditText editTextPassword;
     private DialogListener listener;
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -31,7 +34,7 @@ public class AddAlertDialog extends AppCompatDialogFragment {
 //        String x = getArguments().getString("teste");
 
         builder.setView(view)
-                .setTitle("Teste")
+                .setTitle("Adicionando alerta")
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -47,7 +50,7 @@ public class AddAlertDialog extends AppCompatDialogFragment {
                     }
                 });
 
-        editTextUsername = view.findViewById(R.id.edit_username);
+        editTextUsername = view.findViewById(R.id.name);
         editTextPassword = view.findViewById(R.id.edit_password);
 
         return builder.create();
