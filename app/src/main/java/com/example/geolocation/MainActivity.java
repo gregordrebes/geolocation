@@ -20,6 +20,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btNewRoute = null;
     private Button btRefresh = null;
     private Spinner spRoutes = null;
+    private VolleyRequest request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,28 +51,38 @@ public class MainActivity extends AppCompatActivity {
         btRefresh.setEnabled(false);
 
         ArrayList<Route> routesList = new ArrayList<Route>();
-        Cursor res = ReadableDatabaseManager.getInstance(this).rawQuery( "select * from routes", null );
 
-        if (res != null && res.getCount() != 0) {
-            res.moveToFirst();
+        request.executeGet("/routes", new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    System.out.println(response);
 
-            while(res.isAfterLast() == false) {
-                @SuppressLint("Range") Route route = new Route(res.getInt(res.getColumnIndex("id")), res.getString(res.getColumnIndex("name")));
+                    JSONArray arr = new JSONArray(response);
 
-                routesList.add(route);
-                res.moveToNext();
+                    for (int i=0; i < arr.length(); i++) {
+                        JSONObject respObj = arr.getJSONObject(i);
+                        int id = respObj.getInt("id");
+                        String name = respObj.getString("name");
+
+                        Route route = new Route(id, name);
+
+                        routesList.add(route);
+
+                        ArrayAdapter<Route> adapter = new ArrayAdapter<Route>(
+                            MainActivity.this,
+                            android.R.layout.simple_list_item_1,
+                            routesList
+                        );
+
+                        spRoutes.setAdapter(adapter);
+                        btRefresh.setEnabled(true);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-
-            ArrayAdapter<Route> adapter = new ArrayAdapter<Route>(
-                this,
-                android.R.layout.simple_list_item_1,
-                routesList
-            );
-
-            spRoutes.setAdapter(adapter);
-        }
-
-        btRefresh.setEnabled(true);
+        });
     }
 
     private void initComponents() {
@@ -75,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         btNewRoute = (Button) findViewById(R.id.btNewRoute);
         btRefresh = (Button) findViewById(R.id.btRefresh);
         spRoutes = (Spinner) findViewById(R.id.spRoutes);
+        request = new VolleyRequest(this);
 
         loadAvailableRoutes();
 

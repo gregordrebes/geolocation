@@ -19,6 +19,9 @@ import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class RouteActivity extends AppCompatActivity implements LocationListener {
     private Button btStartStop = null;
     private Button btShowMap = null;
@@ -27,6 +30,7 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     private int currentStatus = GEOLOCATION_STATUS.STOPPED.getStatus();
     private int routeId = 0;
     private String coordinates = "";
+    private VolleyRequest request;
 
     private enum GEOLOCATION_STATUS {
         TRACKING(0),
@@ -80,13 +84,22 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         btStartStop.setEnabled(false);
         btShowMap.setEnabled(true);
 
-        ContentValues routeData = new ContentValues();
-        routeData.put("name", tfRouteName.getText().toString());
+        JSONObject params = new JSONObject();
 
-        // TODO other fields
-        routeData.put("coordinates", coordinates);
+        try {
+            params.put("name", tfRouteName.getText().toString());
+            params.put("coordinates", coordinates);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        routeId = (int) WritableDatabaseManager.getInstance(this).insert("routes", null, routeData);
+        request.executePost("/routes", params, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                System.out.println(response);
+            }
+        });
+
         // TODO alerts
     }
 
@@ -94,6 +107,8 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         btShowMap = (Button) findViewById(R.id.btShowMap);
         btStartStop = (Button) findViewById(R.id.btStartStop);
         tfRouteName = (TextInputEditText) findViewById(R.id.tfRouteName);
+
+        request = new VolleyRequest(this);
 
         btStartStop.setOnClickListener(new View.OnClickListener() {
             @Override
