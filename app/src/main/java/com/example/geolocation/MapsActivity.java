@@ -17,6 +17,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.geolocation.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,10 +29,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+    private VolleyRequest request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        request = new VolleyRequest(this);
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -46,45 +53,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Bundle bundle = getIntent().getExtras();
         int routeId = bundle.getInt("route");
 
-        Cursor res = ReadableDatabaseManager.getInstance(this).rawQuery( "select * from routes where id = " + routeId, null );
+        request.executeGet("/routes/" + routeId, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject respObj = new JSONObject(response);
+                    String rawCoordinates = respObj.getString("coordinates");
 
-        if (res != null && res.getCount() != 0) {
-            res.moveToFirst();
+                    System.out.println("raw: " + rawCoordinates);
 
-            @SuppressLint("Range") String rawCoordinates = res.getString(res.getColumnIndex("coordinates"));
+                    if (rawCoordinates == null || rawCoordinates.isEmpty()) {
+                        return;
+                    }
 
-            System.out.println("raw: " + rawCoordinates);
-            if (rawCoordinates == null || rawCoordinates.isEmpty()) {
-                return;
-            }
+                    List<String> coordinates = Arrays.asList(rawCoordinates.split(";"));
 
-            List<String> coordinates = Arrays.asList(rawCoordinates.split(";"));
+                    PolylineOptions polylineOptions = new PolylineOptions();
 
-            PolylineOptions polylineOptions = new PolylineOptions();
+                    for (String coordinate : coordinates) {
+                        Double latitude = Double.parseDouble(coordinate.split(",")[0]);
+                        Double longitude = Double.parseDouble(coordinate.split(",")[1]);
 
-            for (String coordinate : coordinates) {
-                Double latitude = Double.parseDouble(coordinate.split(",")[0]);
-                Double longitude = Double.parseDouble(coordinate.split(",")[1]);
+                        polylineOptions.color(Color.RED);
+                        polylineOptions.width(5);
 
-                polylineOptions.color(Color.RED);
-                polylineOptions.width(5);
+                        LatLng position = new LatLng(latitude, longitude);
 
-                LatLng position = new LatLng(latitude, longitude);
+                        polylineOptions.add(position);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f));
 
-                polylineOptions.add(position);
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f));
+                        boolean isLast = coordinate.equals(coordinates.get(coordinates.size() - 1));
 
-                boolean isLast = coordinate.equals(coordinates.get(coordinates.size() - 1));
+                        if (isLast) {
+                            MarkerOptions marker = new MarkerOptions();
+                            marker.position(position);
 
-                if (isLast) {
-                    MarkerOptions marker = new MarkerOptions();
-                    marker.position(position);
+                            mMap.addMarker(marker);
+                        }
+                    }
 
-                    mMap.addMarker(marker);
+                    mMap.addPolyline(polylineOptions);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-
-            mMap.addPolyline(polylineOptions);
-        }
+        });
     }
 }

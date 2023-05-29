@@ -22,6 +22,9 @@ import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class RouteActivity extends AppCompatActivity implements LocationListener, AddAlertDialog.DialogListener {
     private Button btStartStop = null;
     private Button btShowMap = null;
@@ -32,6 +35,7 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     private int currentStatus = GEOLOCATION_STATUS.STOPPED.getStatus();
     private int routeId = 0;
     private String coordinates = "";
+    private VolleyRequest request;
 
     private String teste = "teste";
 
@@ -88,12 +92,22 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         btStartStop.setEnabled(false);
         btShowMap.setEnabled(true);
 
-        ContentValues routeData = new ContentValues();
-        routeData.put("name", tfRouteName.getText().toString());
-        // TODO other fields
-        routeData.put("coordinates", coordinates);
+        JSONObject params = new JSONObject();
 
-        routeId = (int) WritableDatabaseManager.getInstance(this).insert("routes", null, routeData);
+        try {
+            params.put("name", tfRouteName.getText().toString());
+        params.put("coordinates", coordinates);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        request.executePost("/routes", params, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                System.out.println(response);
+            }
+        });
+
         // TODO alerts
     }
 
@@ -102,6 +116,8 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         btStartStop = (Button) findViewById(R.id.btStartStop);
         btAddAlert = (Button) findViewById(R.id.btAddAlert);
         tfRouteName = (TextInputEditText) findViewById(R.id.tfRouteName);
+
+        request = new VolleyRequest(this);
 
         btStartStop.setOnClickListener(new View.OnClickListener() {
             @Override
