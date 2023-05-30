@@ -25,6 +25,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RouteActivity extends AppCompatActivity implements LocationListener, AddAlertDialog.DialogListener {
     private Button btStartStop = null;
     private Button btShowMap = null;
@@ -37,7 +40,9 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     private String coordinates = "";
     private VolleyRequest request;
 
-    private String teste = "teste";
+    private String lastCoordinate;
+
+    private List<AlertDataType> alerts = new ArrayList<>();
 
     private enum GEOLOCATION_STATUS {
         TRACKING(0),
@@ -75,8 +80,8 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         if (!coordinates.isEmpty()) {
             coordinates += separator;
         }
-
-        coordinates += location.getLatitude() + "," + location.getLongitude();
+        lastCoordinate = location.getLatitude() + "," + location.getLongitude();
+        coordinates += lastCoordinate;
     }
 
     private void onStartTracking() {
@@ -92,23 +97,46 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         btStartStop.setEnabled(false);
         btShowMap.setEnabled(true);
 
-        JSONObject params = new JSONObject();
+        ContentValues routeData = new ContentValues();
+        routeData.put("name", tfRouteName.getText().toString());
+        routeData.put("coordinates", coordinates);
 
-        try {
-            params.put("name", tfRouteName.getText().toString());
-        params.put("coordinates", coordinates);
-        } catch (Exception e) {
-            e.printStackTrace();
+        routeId = (int) WritableDatabaseManager.getInstance(this).insert("routes", null, routeData);
+
+        if (!alerts.isEmpty()){
+            for (AlertDataType a : alerts) {
+                ContentValues alertData = new ContentValues();
+                alertData.put("name", a.getName());
+                alertData.put("description", a.getDescription());
+                alertData.put("id_category", a.getCategoryId());
+                alertData.put("id_route", routeId);
+                alertData.put("photo_64", a.getBase64Image());
+                alertData.put("coordinates", a.getCoordinates());
+                WritableDatabaseManager.getInstance(this).insert("alerts", null, alertData);
+            }
         }
 
-        request.executePost("/routes", params, new com.android.volley.Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                System.out.println(response);
-            }
-        });
 
         // TODO alerts
+
+        // TODO comunicacao com web service
+//        JSONObject params = new JSONObject();
+//
+//        try {
+//            params.put("name", tfRouteName.getText().toString());
+//            params.put("coordinates", coordinates);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        request.executePost("/routes", params, new com.android.volley.Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                System.out.println(response);
+//            }
+//        });
+
     }
 
     private void initComponents() {
@@ -168,13 +196,13 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     public void openDialog() {
         AddAlertDialog exampleDialog = new AddAlertDialog();
         Bundle bundle = new Bundle();
-//        bundle.putString("teste", String.valueOf(tfRouteName.getText()));
+        bundle.putString("coordinates", lastCoordinate);
         exampleDialog.setArguments(bundle);
         exampleDialog.show(getSupportFragmentManager(), "example dialog");
     }
 
     @Override
-    public void applyTexts(String username, String password) {
-        /**/
+    public void applyTexts(String name, String description, int categoryId, String imageBase64, String coordinates) {
+        alerts.add(new AlertDataType(name, description, categoryId, imageBase64, coordinates));
     }
 }

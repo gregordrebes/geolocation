@@ -11,11 +11,15 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 public class AddAlertDialog extends AppCompatDialogFragment {
-    private EditText editTextUsername;
-    private EditText editTextPassword;
+    private EditText nameField;
+    private EditText descriptionField;
+    private Spinner categoryField;
+    private String base64Image;
     private DialogListener listener;
+    private String coordinates;
 
     @NonNull
     @Override
@@ -30,8 +34,8 @@ public class AddAlertDialog extends AppCompatDialogFragment {
         // LINKS UTEIS PARA ABRIR O ALERT
         // https://www.youtube.com/watch?v=ARezg1D9Zd0
         // https://gist.github.com/codinginflow/11e5acb69a91db8f2be0f8e495505d12
-//        assert getArguments() != null;
-//        String x = getArguments().getString("teste");
+        assert getArguments() != null;
+        coordinates = getArguments().getString("coordinates");
 
         builder.setView(view)
                 .setTitle("Adicionando alerta")
@@ -44,14 +48,18 @@ public class AddAlertDialog extends AppCompatDialogFragment {
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String username = editTextUsername.getText().toString();
-                        String password = editTextPassword.getText().toString();
-                        listener.applyTexts(username, password);
+                        String name  = nameField.getText().toString();
+                        String description = descriptionField.getText().toString();
+                        int index = categoryField.getSelectedItemPosition();
+                        String value = categoryField.getSelectedItem().toString();
+                        String b64 = ""; // TODO: extract image
+                        listener.applyTexts(name, description, index, b64, coordinates);
                     }
                 });
 
-        editTextUsername = view.findViewById(R.id.name);
-        editTextPassword = view.findViewById(R.id.edit_password);
+        nameField = view.findViewById(R.id.name);
+        descriptionField = view.findViewById(R.id.description);
+        categoryField = view.findViewById(R.id.category);
 
         return builder.create();
     }
@@ -69,6 +77,6 @@ public class AddAlertDialog extends AppCompatDialogFragment {
     }
 
     public interface DialogListener {
-        void applyTexts(String username, String password);
+        void applyTexts(String name, String description, int categoryId, String imageBase64, String coordinates);
     }
 }
