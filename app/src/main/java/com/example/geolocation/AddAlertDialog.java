@@ -10,8 +10,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class AddAlertDialog extends AppCompatDialogFragment {
     private EditText nameField;
@@ -50,16 +57,17 @@ public class AddAlertDialog extends AppCompatDialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String name  = nameField.getText().toString();
                         String description = descriptionField.getText().toString();
-                        int index = categoryField.getSelectedItemPosition();
-                        String value = categoryField.getSelectedItem().toString();
+                        Category category = (Category) categoryField.getSelectedItem();
                         String b64 = ""; // TODO: extract image
-                        listener.applyTexts(name, description, index, b64, coordinates);
+                        listener.applyTexts(name, description, category.getId(), b64, coordinates);
                     }
                 });
 
         nameField = view.findViewById(R.id.name);
         descriptionField = view.findViewById(R.id.description);
         categoryField = view.findViewById(R.id.category);
+
+        loadCategories();
 
         return builder.create();
     }
@@ -74,6 +82,40 @@ public class AddAlertDialog extends AppCompatDialogFragment {
             throw new ClassCastException(context.toString() +
                     "must implement ExampleDialogListener");
         }
+    }
+
+    private void loadCategories() {
+        ArrayList<Category> categoriesList = new ArrayList<Category>();
+
+        new VolleyRequest(this.getContext()).executeGet("/categories", new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray arr = new JSONArray(response);
+
+                    for (int i=0; i < arr.length(); i++) {
+                        JSONObject respObj = arr.getJSONObject(i);
+
+                        int id = respObj.getInt("id");
+                        String name = respObj.getString("name");
+
+                        Category category = new Category(id, name);
+
+                        categoriesList.add(category);
+                    }
+
+                    ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(
+                            AddAlertDialog.this.getContext(),
+                            android.R.layout.simple_list_item_1,
+                            categoriesList
+                    );
+
+                    categoryField.setAdapter(adapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public interface DialogListener {

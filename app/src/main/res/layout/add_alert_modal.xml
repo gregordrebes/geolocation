@@ -27,7 +27,6 @@
         android:id="@+id/category"
         android:layout_width="379dp"
         android:layout_height="69dp"
-        android:entries="@array/alert_categories"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/description" />
 

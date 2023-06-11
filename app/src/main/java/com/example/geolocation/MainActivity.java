@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 try {
-                    System.out.println(response);
-
                     JSONArray arr = new JSONArray(response);
 
                     for (int i=0; i < arr.length(); i++) {

@@ -97,46 +97,52 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         btStartStop.setEnabled(false);
         btShowMap.setEnabled(true);
 
-        ContentValues routeData = new ContentValues();
-        routeData.put("name", tfRouteName.getText().toString());
-        routeData.put("coordinates", coordinates);
+        createRouteAndAlert();
+    }
 
-        routeId = (int) WritableDatabaseManager.getInstance(this).insert("routes", null, routeData);
+    private void createRouteAndAlert() {
+        JSONObject params = new JSONObject();
 
-        if (!alerts.isEmpty()){
-            for (AlertDataType a : alerts) {
-                ContentValues alertData = new ContentValues();
-                alertData.put("name", a.getName());
-                alertData.put("description", a.getDescription());
-                alertData.put("id_category", a.getCategoryId());
-                alertData.put("id_route", routeId);
-                alertData.put("photo_64", a.getBase64Image());
-                alertData.put("coordinates", a.getCoordinates());
-                WritableDatabaseManager.getInstance(this).insert("alerts", null, alertData);
-            }
+        try {
+            params.put("name", tfRouteName.getText().toString());
+            params.put("coordinates", coordinates);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
+        request.executePost("/routes", params, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                if (response != null) {
+                    try {
+                        routeId = response.getInt("id");
+                        createAlert();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
 
-        // TODO alerts
+    private void createAlert() throws Exception {
+        if (!alerts.isEmpty()){
+            JSONObject params = new JSONObject();
 
-        // TODO comunicacao com web service
-//        JSONObject params = new JSONObject();
-//
-//        try {
-//            params.put("name", tfRouteName.getText().toString());
-//            params.put("coordinates", coordinates);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        request.executePost("/routes", params, new com.android.volley.Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                System.out.println(response);
-//            }
-//        });
+            for (AlertDataType a : alerts) {
+                params.put("name", a.getName());
+                params.put("description", a.getDescription());
+                params.put("categoryId", a.getCategoryId());
+                params.put("routeId", routeId);
+                params.put("photo64", a.getBase64Image());
+                params.put("coordinates", a.getCoordinates());
 
+                request.executePost("/alerts", params, new com.android.volley.Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {}
+                });
+            }
+        }
     }
 
     private void initComponents() {
