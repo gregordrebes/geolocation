@@ -91,47 +91,47 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     }
 
     private void initComponents() {
-        btShowMap = (Button) findViewById(R.id.btShowMap);
-        btStartStop = (Button) findViewById(R.id.btStartStop);
-        tfRouteName = (TextInputEditText) findViewById(R.id.tfRouteName);
-
-        btStartStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean isRouteNameEmpty = tfRouteName.getText().toString().trim().length() <= 3;
-
-                if (isRouteNameEmpty) {
-                    new AlertDialog.Builder(RouteActivity.this)
-                            .setTitle("Preencha o nome da rota")
-                            .setMessage("Você deve preencher um nome de rota com pelo menos 4 caracteres")
-                            .show();
-
-                    return;
-                }
-
-                boolean isStopped = currentStatus == GEOLOCATION_STATUS.STOPPED.getStatus();
-
-                if (isStopped) {
-                    onStartTracking();
-                    return;
-                }
-
-                onStopTracking();
-            }
-        });
-
-        btShowMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btShowMap.setEnabled(false);
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("route", routeId);
-
-                Intent intent = new Intent(RouteActivity.this, MapsActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
+//        btShowMap = (Button) findViewById(R.id.btShowMap);
+//        btStartStop = (Button) findViewById(R.id.btStartStop);
+//        tfRouteName = (TextInputEditText) findViewById(R.id.tfRouteName);
+//
+//        btStartStop.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                boolean isRouteNameEmpty = tfRouteName.getText().toString().trim().length() <= 3;
+//
+//                if (isRouteNameEmpty) {
+//                    new AlertDialog.Builder(RouteActivity.this)
+//                            .setTitle("Preencha o nome da rota")
+//                            .setMessage("Você deve preencher um nome de rota com pelo menos 4 caracteres")
+//                            .show();
+//
+//                    return;
+//                }
+//
+//                boolean isStopped = currentStatus == GEOLOCATION_STATUS.STOPPED.getStatus();
+//
+//                if (isStopped) {
+//                    onStartTracking();
+//                    return;
+//                }
+//
+//                onStopTracking();
+//            }
+//        });
+//
+//        btShowMap.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                btShowMap.setEnabled(false);
+//
+//                Bundle bundle = new Bundle();
+//                bundle.putInt("route", routeId);
+//
+//                Intent intent = new Intent(RouteActivity.this, MapsActivity.class);
+//                intent.putExtras(bundle);
+//                startActivity(intent);
+//            }
+//        });
     }
 }

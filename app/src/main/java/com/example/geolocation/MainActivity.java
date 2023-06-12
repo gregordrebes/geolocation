@@ -1,43 +1,35 @@
 package com.example.geolocation;
 
+import android.content.Intent;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.widget.*;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import com.example.geolocation.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CardClickListnener {
+
+    private ActivityMainBinding activityMainBinding;
     private Button btViewRoute = null;
     private ImageButton btNewRoute = null;
     private Button btRefresh = null;
     private Spinner spRoutes = null;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        activityMainBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(activityMainBinding.getRoot());
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -46,34 +38,37 @@ public class MainActivity extends AppCompatActivity {
 
         initComponents();
 
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setReverseLayout(false);
-        final RecyclerView lv = findViewById(R.id.rout_list);
-        lv.setLayoutManager(layoutManager);
+        activityMainBinding.routList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 1));
+
         final List<Route> rl = new ArrayList<>();
 
-        final Route r = new Route(0, "Caca");
-        final Route r1 = new Route(0, "Caca");
-        final Route r2 = new Route(0, "Caca");
-        final Route r3 = new Route(0, "Caca");
-        final Route r4 = new Route(0, "Caca");
-        final Route r5 = new Route(0, "Caca");
-
-        rl.add(r);
-        rl.add(r1);
-        rl.add(r2);
-        rl.add(r3);
-        rl.add(r4);
-        rl.add(r5);
+//        final Route r = new Route(0, "Caca 0");
+//        final Route r1 = new Route(1, "Caca 1");
+//        final Route r2 = new Route(2, "Caca 2");
+//        final Route r3 = new Route(3, "Caca 3");
+//        final Route r4 = new Route(4, "Caca 4");
+//        final Route r5 = new Route(5, "Caca 5");
+//
+//        rl.add(r);
+//        rl.add(r1);
+//        rl.add(r2);
+//        rl.add(r3);
+//        rl.add(r4);
+//        rl.add(r5);
         if(rl.size() > 0) {
             findViewById(R.id.alert_icon).setVisibility(View.INVISIBLE);
             findViewById(R.id.alert_message).setVisibility(View.INVISIBLE);
+            activityMainBinding.routList.setAdapter(new Adapter(rl, this));
         }
-        Adapter a = new Adapter(rl);
-        lv.setAdapter(a);
+
 
     }
 
+    @Override
+    public void onClick(Route route) {
+        Intent intent = new Intent(MainActivity.this, RouteActivity.class);
+        startActivity(intent);
+    }
     private void loadAvailableRoutes() {
 //        btRefresh.setEnabled(false);
 //
@@ -115,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, RouteActivity.class);
                 startActivity(intent);
+                Log.i("add.route", "me clicaram");
             }
         });
 
@@ -148,4 +144,5 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
     }
+
 }
