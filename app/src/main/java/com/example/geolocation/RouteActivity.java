@@ -82,13 +82,15 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         }
         lastCoordinate = location.getLatitude() + "," + location.getLongitude();
         coordinates += lastCoordinate;
+        if (currentStatus == 0 && !btAddAlert.isEnabled()) {
+            btAddAlert.setEnabled(true);
+        }
     }
 
     private void onStartTracking() {
         currentStatus = GEOLOCATION_STATUS.TRACKING.getStatus();
         tfRouteName.setEnabled(false);
         btStartStop.setText("Parar");
-        btAddAlert.setEnabled(true);
     }
 
     private void onStopTracking() {
