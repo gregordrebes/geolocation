@@ -74,7 +74,7 @@
     <ImageButton android:layout_width="70dp"
                  android:layout_height="77dp"
                  app:srcCompat="@drawable/outline_campaign_foreground"
-                 android:id="@+id/newAlert"
+                 android:id="@+id/btAddAlert"
                  app:tint="@color/top_app_bar_color"
                  android:backgroundTint="@color/app_background"
                  tools:ignore="MissingConstraints"
