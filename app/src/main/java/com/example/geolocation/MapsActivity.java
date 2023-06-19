@@ -2,11 +2,8 @@ package com.example.geolocation;
 
 import androidx.fragment.app.FragmentActivity;
 
-import android.annotation.SuppressLint;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,11 +14,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.geolocation.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
