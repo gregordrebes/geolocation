@@ -33,16 +33,16 @@
             android:value="AIzaSyDelCnBEWmfDhfz0YJ7TNuqMPlaBclcJoE" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name="com.geolocatepoop.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps" />
 
         <activity
-            android:name=".RouteActivity"
+            android:name="com.geolocatepoop.RouteActivity"
             android:exported="false" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.geolocatepoop.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

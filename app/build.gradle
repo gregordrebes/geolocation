@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.geolocation'
+    namespace 'com.geolocatepoop'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.geolocation"
+        applicationId "com.geolocatepoop"
         minSdk 24
         targetSdk 33
         versionCode 1

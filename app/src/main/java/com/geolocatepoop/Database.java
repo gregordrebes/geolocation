@@ -1,4 +1,4 @@
-package com.example.geolocation;
+package com.geolocatepoop;
 
 import android.content.Context;
 import android.database.DatabaseErrorHandler;
