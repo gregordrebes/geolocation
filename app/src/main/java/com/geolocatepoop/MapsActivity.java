@@ -1,17 +1,18 @@
-package com.example.geolocation;
+package com.geolocatepoop;
 
 import androidx.fragment.app.FragmentActivity;
 
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.geolocatepoop.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.example.geolocation.databinding.ActivityMapsBinding;
+import com.geolocatepoop.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;

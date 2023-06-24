@@ -1,4 +1,4 @@
-package com.example.geolocation;
+package com.geolocatepoop;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import com.geolocatepoop.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

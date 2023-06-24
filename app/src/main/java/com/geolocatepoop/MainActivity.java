@@ -1,4 +1,4 @@
-package com.example.geolocation;
+package com.geolocatepoop;
 
 import android.content.Intent;
 import android.widget.*;
@@ -6,11 +6,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import androidx.recyclerview.widget.GridLayoutManager;
 import com.example.geolocation.databinding.ActivityMainBinding;
+
+import com.geolocatepoop.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
