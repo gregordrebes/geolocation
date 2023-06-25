@@ -1,9 +1,11 @@
-package com.example.geolocation;
+package com.geolocatepoop;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.geolocation.databinding.CardComponentBinding;
+import com.geolocatepoop.CardClickListnener;
+import com.geolocatepoop.CardViewHolder;
+import com.geolocatepoop.databinding.CardComponentBinding;
 
 import java.util.List;
 

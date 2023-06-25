@@ -1,10 +1,9 @@
-package com.example.geolocation;
+package com.geolocatepoop;
 
-import android.annotation.SuppressLint;
-import android.util.Log;
 import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.geolocation.databinding.CardComponentBinding;
+import com.geolocatepoop.databinding.CardComponentBinding;
+
 
 public class CardViewHolder extends RecyclerView.ViewHolder {
     private final CardComponentBinding componentBinding;

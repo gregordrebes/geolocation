@@ -1,21 +1,19 @@
 package com.geolocatepoop;
 
 import android.content.Intent;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import androidx.recyclerview.widget.GridLayoutManager;
-import com.example.geolocation.databinding.ActivityMainBinding;
 
-import com.geolocatepoop.R;
-
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.geolocatepoop.databinding.ActivityMainBinding;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,8 +25,8 @@ public class MainActivity extends AppCompatActivity implements CardClickListnene
     private ActivityMainBinding activityMainBinding;
     private Button btViewRoute = null;
     private ImageButton btNewRoute = null;
-    private Button btRefresh = null;
-    private Spinner spRoutes = null;
+    private SwipeRefreshLayout pullToRefresh = null;
+    private SwipeRefreshLayout pullToRefresh2 = null;
     private VolleyRequest request;
 
     @Override
@@ -57,9 +55,8 @@ public class MainActivity extends AppCompatActivity implements CardClickListnene
         startActivity(intent);
     }
     private void loadAvailableRoutes() {
-//        btRefresh.setEnabled(false);
 
-        ArrayList<Route> routesList = new ArrayList<Route>();
+        ArrayList<Route> routesList = new ArrayList<>();
 
         request.executeGet("/routes", new com.android.volley.Response.Listener<String>() {
             @Override
@@ -75,20 +72,10 @@ public class MainActivity extends AppCompatActivity implements CardClickListnene
                         Route route = new Route(id, name);
 
                         routesList.add(route);
-
-//                        ArrayAdapter<Route> adapter = new ArrayAdapter<Route>(
-//                            MainActivity.this,
-//                            android.R.layout.simple_list_item_1,
-//                            routesList
-//                        );
-//
-//                        spRoutes.setAdapter(adapter);
-//                        btRefresh.setEnabled(true);
                     }
 
                     if(routesList.size() > 0) {
-                        findViewById(R.id.alert_icon).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.alert_message).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.swiperefresh2).setVisibility(View.INVISIBLE);
                         activityMainBinding.routList.setAdapter(new Adapter(routesList, MainActivity.this));
                     }
                 } catch (JSONException e) {
@@ -99,8 +86,9 @@ public class MainActivity extends AppCompatActivity implements CardClickListnene
     }
 
     private void initComponents() {
-        btNewRoute = (ImageButton) findViewById(R.id.btNewRoute);
-//        btRefresh = (Button) findViewById(R.id.btRefresh);
+        btNewRoute = findViewById(R.id.btNewRoute);
+        pullToRefresh = findViewById(R.id.swiperefresh);
+        pullToRefresh2 = findViewById(R.id.swiperefresh2);
         request = new VolleyRequest(this);
 
         loadAvailableRoutes();
@@ -113,11 +101,19 @@ public class MainActivity extends AppCompatActivity implements CardClickListnene
             }
         });
 
-//        btRefresh.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                loadAvailableRoutes();
-//            }
-//        });
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadAvailableRoutes();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+        pullToRefresh2.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadAvailableRoutes();
+                pullToRefresh2.setRefreshing(false);
+            }
+        });
     }
 }

@@ -14,8 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.geolocatepoop.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
