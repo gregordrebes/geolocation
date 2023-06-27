@@ -3,14 +3,25 @@ package com.geolocatepoop;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -20,12 +31,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class AddAlertDialog extends AppCompatDialogFragment {
     private EditText nameField;
     private EditText descriptionField;
     private Spinner categoryField;
+    private Button btn_foto;
+    private int cameraRequest = 1888;
     private String base64Image;
     private DialogListener listener;
     private String coordinates;
@@ -60,7 +74,7 @@ public class AddAlertDialog extends AppCompatDialogFragment {
                         String name  = nameField.getText().toString();
                         String description = descriptionField.getText().toString();
                         Category category = (Category) categoryField.getSelectedItem();
-                        String b64 = ""; // TODO: extract image
+                        String b64 = base64Image;
                         listener.applyTexts(name, description, category.getId(), b64, coordinates);
                     }
                 });
@@ -68,6 +82,20 @@ public class AddAlertDialog extends AppCompatDialogFragment {
         nameField = view.findViewById(R.id.name);
         descriptionField = view.findViewById(R.id.description);
         categoryField = view.findViewById(R.id.category);
+
+
+        if (ContextCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+            String[] permissions = {android.Manifest.permission.CAMERA};
+            ActivityCompat.requestPermissions(this.getActivity(), permissions, cameraRequest);
+        }
+
+        btn_foto = view.findViewById(R.id.btn_foto);
+        btn_foto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), cameraRequest);
+            }
+        });
 
         loadCategories();
 
@@ -122,5 +150,18 @@ public class AddAlertDialog extends AppCompatDialogFragment {
 
     public interface DialogListener {
         void applyTexts(String name, String description, int categoryId, String imageBase64, String coordinates);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == cameraRequest) {
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
+            byte[] b = baos.toByteArray();
+            base64Image = Base64.encodeToString(b, Base64.DEFAULT);
+
+        }
     }
 }
