@@ -2,9 +2,9 @@ package com.geolocatepoop;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
+import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
@@ -27,6 +27,7 @@ public class AddAlertDialog extends AppCompatDialogFragment {
     private String base64Image;
     private DialogListener listener;
     private String coordinates;
+    private ImageButton saveButton;
 
     @NonNull
     @Override
@@ -44,28 +45,23 @@ public class AddAlertDialog extends AppCompatDialogFragment {
         assert getArguments() != null;
         coordinates = getArguments().getString("coordinates");
 
-        builder.setView(view)
-                .setTitle("Adicionando alerta")
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String name  = nameField.getText().toString();
-                        String description = descriptionField.getText().toString();
-                        Category category = (Category) categoryField.getSelectedItem();
-                        String b64 = ""; // TODO: extract image
-                        listener.applyTexts(name, description, category.getId(), b64, coordinates);
-                    }
-                });
+        builder.setView(view);
 
         nameField = view.findViewById(R.id.name);
         descriptionField = view.findViewById(R.id.description);
         categoryField = view.findViewById(R.id.category);
+        saveButton = view.findViewById(R.id.btn_save);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name  = nameField.getText().toString();
+                String description = descriptionField.getText().toString();
+                Category category = (Category) categoryField.getSelectedItem();
+                String b64 = ""; // TODO: extract image
+                listener.applyTexts(name, description, category.getId(), b64, coordinates);
+            }
+        });
 
         loadCategories();
 
