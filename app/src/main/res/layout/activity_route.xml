@@ -1,69 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.geolocatepoop.RouteActivity">
+    android:background="@color/app_background"
+    tools:context=".RouteActivity">
 
-    <Button
-        android:id="@+id/btStartStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="304dp"
-        android:text="Iniciar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btShowMap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="124dp"
-        android:layout_marginTop="444dp"
-        android:enabled="false"
-        android:text="Mostrar mapa"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="72dp"
-        android:text="Nova rota"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="249dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="79dp"
-        android:layout_marginTop="87dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tfRouteName"
+    <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="true"
-            android:hint="Digite o nome da rota" />
+            tools:ignore="MissingConstraints"
+            android:elevation="1dp"
+            android:id="@+id/appBarLayout">
+        <com.google.android.material.appbar.MaterialToolbar
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                app:menu="@menu/top_app_bar"
+                android:background="@color/top_app_bar_color">
+            <TextView
+                    android:text="Nova Rota"
+                    android:textColor="@color/icon_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/topBarTitle"
+                    android:textSize="24sp"/>
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="314dp"
+            android:layout_height="48dp"
+            tools:ignore="MissingConstraints"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="80dp"
+            android:id="@+id/textInputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="@color/app_background"
+            app:layout_constraintEnd_toEndOf="parent" app:boxStrokeColor="@color/top_app_bar_color"
+            app:hintTextColor="@color/top_app_bar_color" app:startIconTint="@color/top_app_bar_color"
+            app:endIconTint="@color/top_app_bar_color">
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfRouteName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/app_background"
+                android:enabled="true"
+                android:hint="Digite o nome da rota"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/btAddAlert"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="112dp"
-        android:layout_marginTop="380dp"
-        android:enabled="false"
-        android:text="Adicionar alerta"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="411dp"
+            android:layout_height="471dp"
+            tools:ignore="MissingConstraints"
+            android:layout_marginTop="25dp"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    <ImageButton android:id="@+id/btStartStop"
+                 android:layout_width="70dp"
+                 android:layout_height="77dp"
+                 app:srcCompat="@drawable/play_cyrcle_icon_foreground"
+                 app:tint="@color/top_app_bar_color"
+                 android:backgroundTint="@color/app_background"
+                 tools:ignore="MissingConstraints"
+                 android:layout_marginEnd="80dp" app:layout_constraintEnd_toEndOf="parent"
+                 android:layout_marginTop="15dp" app:layout_constraintTop_toBottomOf="@+id/map"/>
+    <ImageButton android:id="@+id/btAddAlert"
+                 android:layout_width="70dp"
+                 android:layout_height="77dp"
+                 app:srcCompat="@drawable/outline_campaign_foreground"
+                 app:tint="@color/top_app_bar_color"
+                 android:backgroundTint="@color/app_background"
+                 tools:ignore="MissingConstraints"
+                 android:layout_marginTop="15dp" app:layout_constraintTop_toBottomOf="@+id/map"
+                 app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="80dp"/>
+    <!--    <Button-->
+<!--            android:id="@+id/btShowMap"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="24dp"-->
+<!--            android:layout_marginTop="652dp"-->
+<!--            android:enabled="false"-->
+<!--            android:text="Mostrar mapa"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"/>-->
+<!--    <Button-->
+<!--            android:id="@+id/btStartStop"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Iniciar"-->
+<!--            tools:layout_editor_absoluteY="667dp" android:layout_marginStart="104dp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/btShowMap"/>-->
+
 </androidx.constraintlayout.widget.ConstraintLayout>

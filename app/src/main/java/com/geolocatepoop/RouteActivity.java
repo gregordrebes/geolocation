@@ -1,5 +1,9 @@
 package com.geolocatepoop;
 
+import android.graphics.Color;
+import android.util.Log;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -7,7 +11,6 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,40 +19,47 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.geolocatepoop.R;
+import com.geolocatepoop.databinding.ActivityMapsBinding;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class RouteActivity extends AppCompatActivity implements LocationListener, AddAlertDialog.DialogListener {
-    private Button btStartStop = null;
-    private Button btShowMap = null;
+public class RouteActivity extends AppCompatActivity implements LocationListener, AddAlertDialog.DialogListener, OnMapReadyCallback {
 
-    private Button btAddAlert = null;
+
+    private GoogleMap mMap;
+    private ActivityMapsBinding binding;
+    private ImageButton btStartStop = null;
+    private final Button btShowMap = null;
+
+    private ImageButton btAddAlert = null;
     private TextInputEditText tfRouteName = null;
-
     private int currentStatus = GEOLOCATION_STATUS.STOPPED.getStatus();
     private int routeId = 0;
     private String coordinates = "";
     private VolleyRequest request;
-
     private String lastCoordinate;
-
-    private List<AlertDataType> alerts = new ArrayList<>();
+    private final List<AlertDataType> alerts = new ArrayList<>();
 
     private enum GEOLOCATION_STATUS {
         TRACKING(0),
         STOPPED(1);
-
         private final int status;
-
         GEOLOCATION_STATUS(final int newStatus) {
             this.status = newStatus;
         }
-
         public int getStatus() { return status; }
     }
 
@@ -57,6 +67,23 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
+
+        try {
+            final Bundle bundle = getIntent().getExtras();
+            routeId = bundle.getInt("route", 0);
+
+            if (routeId != 0) {
+                findViewById(R.id.btAddAlert).setActivated(false);
+                findViewById(R.id.btAddAlert).setVisibility(View.INVISIBLE);
+
+                findViewById(R.id.btStartStop).setActivated(false);
+                findViewById(R.id.btStartStop).setVisibility(View.INVISIBLE);
+
+                findViewById(R.id.textInputLayout).setActivated(false);
+                findViewById(R.id.textInputLayout).setVisibility(View.INVISIBLE);
+            }
+        } catch (Exception ignored) {
+        }
 
         initComponents();
 
@@ -66,6 +93,10 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
         }
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
         mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
@@ -86,12 +117,12 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     private void onStartTracking() {
         currentStatus = GEOLOCATION_STATUS.TRACKING.getStatus();
         tfRouteName.setEnabled(false);
-        btStartStop.setText("Parar");
+//        btStartStop.setText("Parar");
     }
 
     private void onStopTracking() {
         currentStatus = GEOLOCATION_STATUS.STOPPED.getStatus();
-        btStartStop.setText("Iniciar");
+//        btStartStop.setText("Iniciar");
         btStartStop.setEnabled(false);
         btShowMap.setEnabled(true);
 
@@ -144,9 +175,9 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     }
 
     private void initComponents() {
-        btShowMap = (Button) findViewById(R.id.btShowMap);
-        btStartStop = (Button) findViewById(R.id.btStartStop);
-        btAddAlert = (Button) findViewById(R.id.btAddAlert);
+//        btShowMap = (Button) findViewById(R.id.btShowMap);
+        btStartStop = (ImageButton) findViewById(R.id.btStartStop);
+        btAddAlert = (ImageButton) findViewById(R.id.btAddAlert);
         tfRouteName = (TextInputEditText) findViewById(R.id.tfRouteName);
 
         request = new VolleyRequest(this);
@@ -175,19 +206,19 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
                 onStopTracking();
             }
         });
-        btShowMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btShowMap.setEnabled(false);
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("route", routeId);
-
-                Intent intent = new Intent(RouteActivity.this, MapsActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
+//        btShowMap.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                btShowMap.setEnabled(false);
+//
+//                Bundle bundle = new Bundle();
+//                bundle.putInt("route", routeId);
+//
+//                Intent intent = new Intent(RouteActivity.this, MapsActivity.class);
+//                intent.putExtras(bundle);
+//                startActivity(intent);
+//            }
+//        });
 
         btAddAlert.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,8 +229,8 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     }
 
     public void openDialog() {
-        AddAlertDialog exampleDialog = new AddAlertDialog();
-        Bundle bundle = new Bundle();
+        final AddAlertDialog exampleDialog = new AddAlertDialog();
+        final Bundle bundle = new Bundle();
         bundle.putString("coordinates", lastCoordinate);
         exampleDialog.setArguments(bundle);
         exampleDialog.show(getSupportFragmentManager(), "example dialog");
@@ -208,5 +239,71 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     @Override
     public void applyTexts(String name, String description, int categoryId, String imageBase64, String coordinates) {
         alerts.add(new AlertDataType(name, description, categoryId, imageBase64, coordinates));
+    }
+
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        try {
+            final Bundle bundle = getIntent().getExtras();
+            routeId = bundle.getInt("route", 0);
+            request.executeGet("/routes/" + routeId, new com.android.volley.Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        mMap = googleMap;
+                        JSONObject respObj = new JSONObject(response);
+                        final String rawCoordinates = respObj.getString("coordinates");
+                        final String routeName = respObj.getString("name");
+
+                        Log.i("cacamaster", response);
+
+                        final TextView t = findViewById(R.id.topBarTitle);
+                        t.setText(routeName);
+                        System.out.println("raw: " + rawCoordinates);
+
+                        if (rawCoordinates == null || rawCoordinates.isEmpty()) {
+                            return;
+                        }
+
+                        List<String> coordinates = Arrays.asList(rawCoordinates.split(";"));
+
+                        PolylineOptions polylineOptions = new PolylineOptions();
+
+                        for (String coordinate : coordinates) {
+                            final Double latitude = Double.parseDouble(coordinate.split(",")[0]);
+                            final Double longitude = Double.parseDouble(coordinate.split(",")[1]);
+
+                            polylineOptions.color(Color.RED);
+                            polylineOptions.width(5);
+
+                            final LatLng position = new LatLng(latitude, longitude);
+
+                            polylineOptions.add(position);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f));
+
+                            final boolean isLast = coordinate.equals(coordinates.get(coordinates.size() - 1));
+
+                            if (isLast) {
+                                final MarkerOptions marker = new MarkerOptions();
+                                marker.position(position);
+
+                                mMap.addMarker(marker);
+                            }
+                        }
+
+                        mMap.addPolyline(polylineOptions);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+        } catch (Exception ignored) {
+
+        }
+
+
     }
 }

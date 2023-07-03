@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="top_app_bar_color">#008033</color>
+    <color name="icon_color">#DEE7CD</color>
+    <color name="alert_icon_color">#820000</color>
+    <color name="alert_text_color">#40530A</color>
+    <color name="app_background">#ECEFE6</color>
+    <color name="icon_list_background">#E1D5B5</color>
+    <color name="icon_list">#8E6111</color>
+    <color name="card_list_background">#F1E5C5</color>
 </resources>

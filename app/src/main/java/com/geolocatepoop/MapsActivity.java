@@ -7,14 +7,13 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.Button;
 
-import com.geolocatepoop.R;
+import com.geolocatepoop.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.geolocatepoop.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;

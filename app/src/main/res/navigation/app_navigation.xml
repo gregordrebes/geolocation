@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/app_navigation"
+            tools:ignore="InvalidNavigation"
+            app:startDestination="@id/routes_list">
+    <activity
+            android:id="@+id/routes_list"
+            android:name="com.example.geolocation.MainActivity">
+        <action/>
+    </activity>
+    <activity
+            android:id="@+id/map_route"
+            android:name="com.example.geolocation.MapsActivity">
+
+    </activity>
+
+
+</navigation>

@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
+import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
@@ -24,8 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-
-import com.geolocatepoop.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +42,7 @@ public class AddAlertDialog extends AppCompatDialogFragment {
     private String base64Image;
     private DialogListener listener;
     private String coordinates;
+    private ImageButton saveButton;
 
     @NonNull
     @Override
@@ -60,24 +60,23 @@ public class AddAlertDialog extends AppCompatDialogFragment {
         assert getArguments() != null;
         coordinates = getArguments().getString("coordinates");
 
-        builder.setView(view)
-                .setTitle("Adicionando alerta")
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+        builder.setView(view);
 
-                    }
-                })
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String name  = nameField.getText().toString();
-                        String description = descriptionField.getText().toString();
-                        Category category = (Category) categoryField.getSelectedItem();
-                        String b64 = base64Image;
-                        listener.applyTexts(name, description, category.getId(), b64, coordinates);
-                    }
-                });
+        nameField = view.findViewById(R.id.name);
+        descriptionField = view.findViewById(R.id.description);
+        categoryField = view.findViewById(R.id.category);
+        saveButton = view.findViewById(R.id.btn_save);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name  = nameField.getText().toString();
+                String description = descriptionField.getText().toString();
+                Category category = (Category) categoryField.getSelectedItem();
+                String b64 = base64Image;
+                listener.applyTexts(name, description, category.getId(), b64, coordinates);
+            }
+        });
 
         nameField = view.findViewById(R.id.name);
         descriptionField = view.findViewById(R.id.description);
