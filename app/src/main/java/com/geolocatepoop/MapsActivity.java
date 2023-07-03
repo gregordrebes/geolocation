@@ -4,6 +4,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.widget.Button;
 
 import com.geolocatepoop.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
