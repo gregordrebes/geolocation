@@ -18,27 +18,28 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
-        <activity
-                android:name=".MainActivity"
-                android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDelCnBEWmfDhfz0YJ7TNuqMPlaBclcJoE" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+        <activity
+            android:name="com.geolocatepoop.MapsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_maps" />
+
+        <activity
+            android:name="com.geolocatepoop.RouteActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="com.geolocatepoop.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-                android:name=".MapsActivity"
-                android:exported="false"
-                android:label="@string/title_activity_maps" />
-
-        <activity
-                android:name=".RouteActivity"
-                android:exported="false" />
-
-        <meta-data
-                android:name="com.google.android.geo.API_KEY"
-                android:value="${MAPS_API_KEY}"/>
     </application>
 
 </manifest>
