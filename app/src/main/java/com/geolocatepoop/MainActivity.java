@@ -1,50 +1,62 @@
 package com.geolocatepoop;
 
+import android.content.Intent;
+import android.widget.Button;
+import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
+import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.geolocatepoop.R;
-
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.geolocatepoop.databinding.ActivityMainBinding;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CardClickListnener {
+
+    private ActivityMainBinding activityMainBinding;
     private Button btViewRoute = null;
-    private Button btNewRoute = null;
-    private Button btRefresh = null;
-    private Spinner spRoutes = null;
+    private ImageButton btNewRoute = null;
+    private SwipeRefreshLayout pullToRefresh = null;
+    private SwipeRefreshLayout pullToRefresh2 = null;
     private VolleyRequest request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        activityMainBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(activityMainBinding.getRoot());
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
+        activityMainBinding.routList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 1));
         initComponents();
+
     }
 
-    private void loadAvailableRoutes() {
-        btRefresh.setEnabled(false);
+    @Override
+    public void onClick(Route route) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("route", route.getId());
 
-        ArrayList<Route> routesList = new ArrayList<Route>();
+        Intent intent = new Intent(MainActivity.this, RouteActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+    private void loadAvailableRoutes() {
+
+        ArrayList<Route> routesList = new ArrayList<>();
 
         request.executeGet("/routes", new com.android.volley.Response.Listener<String>() {
             @Override
@@ -60,15 +72,11 @@ public class MainActivity extends AppCompatActivity {
                         Route route = new Route(id, name);
 
                         routesList.add(route);
+                    }
 
-                        ArrayAdapter<Route> adapter = new ArrayAdapter<Route>(
-                            MainActivity.this,
-                            android.R.layout.simple_list_item_1,
-                            routesList
-                        );
-
-                        spRoutes.setAdapter(adapter);
-                        btRefresh.setEnabled(true);
+                    if(routesList.size() > 0) {
+                        findViewById(R.id.swiperefresh2).setVisibility(View.INVISIBLE);
+                        activityMainBinding.routList.setAdapter(new Adapter(routesList, MainActivity.this));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -78,10 +86,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initComponents() {
-        btViewRoute = (Button) findViewById(R.id.btViewRoute);
-        btNewRoute = (Button) findViewById(R.id.btNewRoute);
-        btRefresh = (Button) findViewById(R.id.btRefresh);
-        spRoutes = (Spinner) findViewById(R.id.spRoutes);
+        btNewRoute = findViewById(R.id.btNewRoute);
+        pullToRefresh = findViewById(R.id.swiperefresh);
+        pullToRefresh2 = findViewById(R.id.swiperefresh2);
         request = new VolleyRequest(this);
 
         loadAvailableRoutes();
@@ -94,33 +101,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btRefresh.setOnClickListener(new View.OnClickListener() {
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View view) {
+            public void onRefresh() {
                 loadAvailableRoutes();
+                pullToRefresh.setRefreshing(false);
             }
         });
-
-        btViewRoute.setOnClickListener(new View.OnClickListener() {
+        pullToRefresh2.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View view) {
-                Route selectedRoute = (Route) spRoutes.getSelectedItem();
-
-                if (selectedRoute == null) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Selecione uma rota")
-                            .setMessage("Você deve selecionar uma rota")
-                            .show();
-
-                    return;
-                }
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("route", selectedRoute.getId());
-
-                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
+            public void onRefresh() {
+                loadAvailableRoutes();
+                pullToRefresh2.setRefreshing(false);
             }
         });
     }

@@ -1,51 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.geolocatepoop.MainActivity">
-
-
-    <Button
-        android:id="@+id/btViewRoute"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="116dp"
-        android:text="Visualizar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spRoutes" />
-
-    <Button
-        android:id="@+id/btNewRoute"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="116dp"
-        android:layout_marginEnd="54dp"
-        android:text="Nova rota"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spRoutes" />
-
-    <Spinner
-        android:id="@+id/spRoutes"
-        android:layout_width="254dp"
-        android:layout_height="54dp"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="116dp"
-        android:layout_marginEnd="22dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btRefresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="144dp"
-        android:text="Atualizar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/app_background"
+        tools:context="com.geolocatepoop.MainActivity">
+    <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:elevation="1dp"
+            android:id="@+id/appBarLayout">
+        <com.google.android.material.appbar.MaterialToolbar
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                app:menu="@menu/top_app_bar"
+                android:background="@color/top_app_bar_color">
+            <TextView
+                    android:text="Geo-location"
+                    android:textColor="@color/icon_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView3"
+                    android:textSize="24sp"/>
+            <ImageButton android:layout_width="50dp"
+                         android:layout_height="wrap_content"
+                         android:backgroundTint="@color/top_app_bar_color"
+                         app:srcCompat="@drawable/add_location_alt"
+                         android:id="@+id/btNewRoute"
+                         android:layout_gravity="right"
+                         app:tint="@color/icon_color"
+                         tools:ignore="RtlHardcoded"
+                         android:contentDescription="TODO"/>
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swiperefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            tools:ignore="MissingConstraints"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="55dp">
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rout_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swiperefresh2"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            tools:ignore="MissingConstraints"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="55dp">
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="match_parent"
+                      android:gravity="center"
+                      android:id="@+id/emptyLinearLayout"
+                      android:orientation="vertical">
+            <ImageView android:layout_width="60sp"
+                       android:layout_height="60sp"
+                       app:srcCompat="@drawable/fmd_bad"
+                       android:id="@+id/alert_icon"
+                       app:tint="@color/alert_icon_color"/>
+            <TextView android:layout_width="251dp"
+                      android:layout_height="81dp"
+                      android:textAlignment="center"
+                      android:textSize="24sp"
+                      android:textColor="@color/alert_text_color"
+                      android:id="@+id/alert_message"
+                      android:text="Está vazio por aqui adicione um novo local"/>
+        </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
