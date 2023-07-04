@@ -37,7 +37,7 @@ public class AddAlertDialog extends AppCompatDialogFragment {
     private EditText nameField;
     private EditText descriptionField;
     private Spinner categoryField;
-    private Button btn_foto;
+    private ImageButton btn_foto;
     private int cameraRequest = 1888;
     private String base64Image;
     private DialogListener listener;
@@ -60,38 +60,24 @@ public class AddAlertDialog extends AppCompatDialogFragment {
         assert getArguments() != null;
         coordinates = getArguments().getString("coordinates");
 
-        builder.setView(view)
-                .setTitle("Adicionando alerta")
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String name  = nameField.getText().toString();
-                        String description = descriptionField.getText().toString();
-                        Category category = (Category) categoryField.getSelectedItem();
-                        String b64 = base64Image;
-                        listener.applyTexts(name, description, category.getId(), b64, coordinates);
-                    }
-                });
+        builder.setView(view);
 
         nameField = view.findViewById(R.id.name);
         descriptionField = view.findViewById(R.id.description);
         categoryField = view.findViewById(R.id.category);
         saveButton = view.findViewById(R.id.btn_save);
 
+        AlertDialog alert = builder.create();
+
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View viewTeste) {
                 String name  = nameField.getText().toString();
                 String description = descriptionField.getText().toString();
                 Category category = (Category) categoryField.getSelectedItem();
                 String b64 = ""; // TODO: extract image
                 listener.applyTexts(name, description, category.getId(), b64, coordinates);
+                alert.cancel();
             }
         });
 
@@ -111,7 +97,7 @@ public class AddAlertDialog extends AppCompatDialogFragment {
 
         loadCategories();
 
-        return builder.create();
+        return alert;
     }
 
     @Override

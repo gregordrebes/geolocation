@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,6 +53,8 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     private VolleyRequest request;
     private String lastCoordinate;
     private final List<AlertDataType> alerts = new ArrayList<>();
+
+    PolylineOptions livePolyline = new PolylineOptions();
 
     private enum GEOLOCATION_STATUS {
         TRACKING(0),
@@ -107,10 +110,34 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         if (!coordinates.isEmpty()) {
             coordinates += separator;
         }
+
+        if (lastCoordinate != null && !isEqualToLastCoordinate(location)) {
+            updateMapLines(location);
+        }
+
         lastCoordinate = location.getLatitude() + "," + location.getLongitude();
         coordinates += lastCoordinate;
+
         if (currentStatus == 0 && !btAddAlert.isEnabled()) {
             btAddAlert.setEnabled(true);
+        }
+    }
+
+    private boolean isEqualToLastCoordinate(@NonNull Location location) {
+        return lastCoordinate.equals(location.getLatitude() + "," + location.getLongitude());
+    }
+
+    private void updateMapLines(@NonNull Location location) {
+        livePolyline.color(Color.RED);
+        livePolyline.width(5);
+
+        LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
+
+        livePolyline.add(position);
+
+        if (mMap != null) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 16.0f));
+            mMap.addPolyline(livePolyline);
         }
     }
 
@@ -124,7 +151,7 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
         currentStatus = GEOLOCATION_STATUS.STOPPED.getStatus();
 //        btStartStop.setText("Iniciar");
         btStartStop.setEnabled(false);
-        btShowMap.setEnabled(true);
+        //btShowMap.setEnabled(true);
 
         createRouteAndAlert();
     }
@@ -246,13 +273,13 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
     @Override
     public void onMapReady(GoogleMap googleMap) {
         try {
+            mMap = googleMap;
             final Bundle bundle = getIntent().getExtras();
             routeId = bundle.getInt("route", 0);
             request.executeGet("/routes/" + routeId, new com.android.volley.Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     try {
-                        mMap = googleMap;
                         JSONObject respObj = new JSONObject(response);
                         final String rawCoordinates = respObj.getString("coordinates");
                         final String routeName = respObj.getString("name");
@@ -261,7 +288,6 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
 
                         final TextView t = findViewById(R.id.topBarTitle);
                         t.setText(routeName);
-                        System.out.println("raw: " + rawCoordinates);
 
                         if (rawCoordinates == null || rawCoordinates.isEmpty()) {
                             return;
@@ -281,16 +307,7 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
                             final LatLng position = new LatLng(latitude, longitude);
 
                             polylineOptions.add(position);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f));
-
-                            final boolean isLast = coordinate.equals(coordinates.get(coordinates.size() - 1));
-
-                            if (isLast) {
-                                final MarkerOptions marker = new MarkerOptions();
-                                marker.position(position);
-
-                                mMap.addMarker(marker);
-                            }
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 16.0f));
                         }
 
                         mMap.addPolyline(polylineOptions);
@@ -298,12 +315,40 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
                         e.printStackTrace();
                     }
                 }
+
+
             });
 
-        } catch (Exception ignored) {
+            request.executeGet("/alerts/" + routeId, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray arr = new JSONArray(response);
 
-        }
+                    for (int i=0; i < arr.length(); i++) {
+                        JSONObject respObj = arr.getJSONObject(i);
+                        final String alertCoordinates = respObj.getString("coordinates");
 
+                        if (alertCoordinates == null || alertCoordinates.isEmpty()) {
+                            return;
+                        }
 
+                        final Double latitude = Double.parseDouble(alertCoordinates.split(",")[0]);
+                        final Double longitude = Double.parseDouble(alertCoordinates.split(",")[1]);
+
+                        final LatLng position = new LatLng(latitude, longitude);
+
+                        final MarkerOptions marker = new MarkerOptions();
+                        marker.position(position);
+
+                        mMap.addMarker(marker);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 16.0f));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        } catch (Exception ignored) {}
     }
 }
