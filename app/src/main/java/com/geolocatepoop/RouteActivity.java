@@ -328,6 +328,7 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
                     for (int i=0; i < arr.length(); i++) {
                         JSONObject respObj = arr.getJSONObject(i);
                         final String alertCoordinates = respObj.getString("coordinates");
+                        final String alertName = respObj.getString("name");
 
                         if (alertCoordinates == null || alertCoordinates.isEmpty()) {
                             return;
@@ -340,6 +341,7 @@ public class RouteActivity extends AppCompatActivity implements LocationListener
 
                         final MarkerOptions marker = new MarkerOptions();
                         marker.position(position);
+                        marker.title(alertName);
 
                         mMap.addMarker(marker);
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 16.0f));
